@@ -1,35 +1,35 @@
 ## ট্রেনিং ও ইভ্যালুয়েশন
 
-মডেল বানানো ও compile করার পর সবচেয়ে গুরুত্বপূর্ণ ধাপ হলো training ও evaluation। এই সেকশনে আমরা `model.fit()` দিয়ে মডেল train করবো, training curve analyze করে overfitting/underfitting নির্ণয় করবো, মডেল save/load করবো, এবং নতুন ইমেজে inference করবো। Training হলো সেই প্রক্রিয়া যেখানে মডেল data থেকে pattern শিখে — এবং evaluation হলো সেই প্রক্রিয়া যেখানে আমরা যাচাই করি মডেল সত্যিই শিখেছে কিনা।
+মডেল বানানো ও compile করার পর সবচেয়ে গুরুত্বপূর্ণ ধাপ হলো training ও evaluation। এই সেকশনে আমরা `model.fit()` দিয়ে মডেল train করবো, training curve analyze করে overfitting/underfitting নির্ণয় করবো, মডেল save/load করবো, এবং নতুন ইমেজে inference করবো। Training হলো সেই প্রক্রিয়া যেখানে মডেল data থেকে pattern শিখে  এবং evaluation হলো সেই প্রক্রিয়া যেখানে আমরা যাচাই করি মডেল সত্যিই শিখেছে কিনা।
 
 ### model.fit() দিয়ে ট্রেইনিং
 
-`model.fit()` method দিয়ে মডেল train করা হয়। যেহেতু আমরা `ImageDataGenerator` ব্যবহার করছি, training data generator pass করতে হবে। একটি গুরুত্বপূর্ণ concept হলো `steps_per_epoch` — এটি নির্দেশ করে প্রতি epoch এ কতগুলো batch process হবে। Calculation: `steps_per_epoch = total_training_samples / batch_size`। একইভাবে `validation_steps = total_validation_samples / batch_size`।
+`model.fit()` method দিয়ে মডেল train করা হয়। যেহেতু আমরা `ImageDataGenerator` ব্যবহার করছি, training data generator pass করতে হবে। একটি গুরুত্বপূর্ণ concept হলো `steps_per_epoch`  এটি নির্দেশ করে প্রতি epoch এ কতগুলো batch process হবে। Calculation: `steps_per_epoch = total_training_samples / batch_size`। একইভাবে `validation_steps = total_validation_samples / batch_size`।
 
 ```python
-# ট্রেইনিং
+# Training
 history = model.fit(
     train_generator,                              # Training data generator
-    epochs=20,                                    # 20 epoch train করবো
+    epochs=20,                                    # Train for 20 epochs
     validation_data=val_generator,                # Validation data generator
     steps_per_epoch=train_generator.samples // train_generator.batch_size,
     validation_steps=val_generator.samples // val_generator.batch_size
 )
 
-# Training history তে কী কী আছে?
+# What's in the training history?
 print(f"Available metrics: {history.history.keys()}")
 ```
 
-`history` object টrainin এর সম্পূর্ণ ইতিহাস ধরে রাখে — প্রতি epoch এ training loss, training accuracy, validation loss, validation accuracy। এই data দিয়েই আমরা training curve plot করবো।
+`history` object টrainin এর সম্পূর্ণ ইতিহাস ধরে রাখে  প্রতি epoch এ training loss, training accuracy, validation loss, validation accuracy। এই data দিয়েই আমরা training curve plot করবো।
 
-কয়টি epoch রাখবে? এটি dataset ও task এর উপর নির্ভর করে। সাধারণত 10-50 epoch দিয়ে শুরু করা উচিত, তারপর training curve দেখে decide করা উচিত। Early stopping ব্যবহার করলে epoch সংখ্যা বেশি রাখলেও problem নেই — validation loss improve না করলে training automatically বন্ধ হবে।
+কয়টি epoch রাখবে? এটি dataset ও task এর উপর নির্ভর করে। সাধারণত 10-50 epoch দিয়ে শুরু করা উচিত, তারপর training curve দেখে decide করা উচিত। Early stopping ব্যবহার করলে epoch সংখ্যা বেশি রাখলেও problem নেই  validation loss improve না করলে training automatically বন্ধ হবে।
 
 ### model.evaluate() দিয়ে টেস্ট ইভ্যালুয়েশন
 
 Training শেষে test set এ final evaluation করতে হবে:
 
 ```python
-# Test set এ evaluation
+# Evaluation on test set
 test_loss, test_accuracy = model.evaluate(test_generator)
 
 print(f"\n{'='*50}")
@@ -38,7 +38,7 @@ print(f"Test Accuracy: {test_accuracy:.4f}")
 print(f"{'='*50}")
 ```
 
-Test accuracy হলো আমাদের মডেলের "real" performance — এটি unseen data তে কতটুকু ভালো কাজ করে তার unbiased estimate। যদি test accuracy training accuracy এর অনেক কম হয়, তার মানে overfitting হয়েছে। যদি দুটোই কম হয়, underfitting।
+Test accuracy হলো আমাদের মডেলের "real" performance  এটি unseen data তে কতটুকু ভালো কাজ করে তার unbiased estimate। যদি test accuracy training accuracy এর অনেক কম হয়, তার মানে overfitting হয়েছে। যদি দুটোই কম হয়, underfitting।
 
 ### Training Curve প্লট করা
 
@@ -47,7 +47,7 @@ Training curve হলো মডেলের "health report"। এই curve দ�
 ```python
 import matplotlib.pyplot as plt
 
-# Figure তৈরি
+# Create figure
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
 # Accuracy curve
@@ -95,29 +95,29 @@ Training curve দেখে তিনটি scenario identify করা যা�
 - এর মানে: মডেল training data থেকে pattern শিখেছে এবং unseen data তেও ভালো কাজ করছে
 - এটিই আমাদের লক্ষ্য!
 
-একটি practical tip: validation loss curve এ যে epoch এ minimum loss হয়, সেই epoch এর model weights সবচেয়ে ভালো — এটিকে best model বলে। `ModelCheckpoint` callback দিয়ে best model automatically save করা যায়।
+একটি practical tip: validation loss curve এ যে epoch এ minimum loss হয়, সেই epoch এর model weights সবচেয়ে ভালো  এটিকে best model বলে। `ModelCheckpoint` callback দিয়ে best model automatically save করা যায়।
 
 ### মডেল Save ও Load করা
 
-Training শেষে মডেল save করা অত্যন্ত গুরুত্বপূর্ণ — না হলে প্রতিবার নতুন করে train করতে হবে! Keras দুটি format এ model save করতে পারে:
+Training শেষে মডেল save করা অত্যন্ত গুরুত্বপূর্ণ  না হলে প্রতিবার নতুন করে train করতে হবে! Keras দুটি format এ model save করতে পারে:
 
 ```python
 from tensorflow.keras.models import save_model, load_model
 
-# মডেল save করা (H5 format)
+# Save model (H5 format)
 model.save('apple_tomato_model.h5')
-print("মডেল save হয়েছে: apple_tomato_model.h5")
+print("Model saved: apple_tomato_model.h5")
 
-# মডেল load করা
+# Load model
 loaded_model = load_model('apple_tomato_model.h5')
-print("মডেল load হয়েছে!")
+print("Model loaded!")
 
-# Load করা মডেল verify করা
+# Verify loaded model
 loaded_loss, loaded_acc = loaded_model.evaluate(test_generator)
 print(f"Loaded model accuracy: {loaded_acc:.4f}")
 ```
 
-H5 format (`model.h5`) একটি single file এ মডেলের architecture, weights, ও training configuration সব save করে। এটি portable — এক machine এ train করে অন্য machine এ load করে inference করা যায়। বড় মডেল এর H5 file অনেক বড় হতে পারে (শত MB থেকে GB) — সেক্ষেত্রে শুধু weights save করতে পারো `model.save_weights('weights.h5')`।
+H5 format (`model.h5`) একটি single file এ মডেলের architecture, weights, ও training configuration সব save করে। এটি portable  এক machine এ train করে অন্য machine এ load করে inference করা যায়। বড় মডেল এর H5 file অনেক বড় হতে পারে (শত MB থেকে GB)  সেক্ষেত্রে শুধু weights save করতে পারো `model.save_weights('weights.h5')`।
 
 ### নতুন ইমেজে Inference (predict_image function)
 
@@ -128,35 +128,35 @@ import numpy as np
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 
-# মডেল load
+# Load model
 model = load_model('apple_tomato_model.h5')
 
 def predict_image(img_path, model, target_size=(224, 224), threshold=0.5):
     """
-    একটি ইমেজে prediction করে।
+    Predict on an image.
 
     Parameters:
-        img_path: ইমেজের file path
+        img_path: File path of the image
         model: trained Keras model
-        target_size: ইমেজ resize এর সাইজ
+        target_size: Size for image resize
         threshold: binary classification threshold
 
     Returns:
-        predicted_class: 'apple' বা 'tomato'
-        confidence: prediction এর confidence score
+        predicted_class: 'apple' or 'tomato'
+        confidence: Confidence score of the prediction
     """
 
-    # ইমেজ লোড ও preprocess
+    # Load and preprocess image
     img = image.load_img(img_path, target_size=target_size)
     img_array = image.img_to_array(img)
     img_array = img_array / 255.0           # Normalize (0-255 → 0-1)
-    img_array = np.expand_dims(img_array, axis=0)  # Batch dimension যোগ
+    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
 
     # Prediction
     prediction = model.predict(img_array, verbose=0)
     probability = prediction[0][0]          # Sigmoid output (0-1)
 
-    # Threshold অনুযায়ী class নির্ধারণ
+    # Determine class based on threshold
     if probability > threshold:
         predicted_class = 'tomato'
         confidence = probability
@@ -166,7 +166,7 @@ def predict_image(img_path, model, target_size=(224, 224), threshold=0.5):
 
     return predicted_class, confidence
 
-# ব্যবহারের উদাহরণ
+# Usage example
 result, conf = predict_image('test_apple.jpg', model)
 print(f"Prediction: {result} (Confidence: {conf:.2%})")
 
@@ -176,9 +176,9 @@ print(f"Prediction: {result} (Confidence: {conf:.2%})")
 
 এই function এ কিছু গুরুত্বপূর্ণ বিষয় আছে:
 
-- **`np.expand_dims(img_array, axis=0)`:** মডেল batch input expect করে — shape `(batch_size, 224, 224, 3)`। একটি ইমেজ এর shape হলো `(224, 224, 3)`, তাই batch dimension যোগ করে `(1, 224, 224, 3)` করতে হয়।
+- **`np.expand_dims(img_array, axis=0)`:** মডেল batch input expect করে  shape `(batch_size, 224, 224, 3)`। একটি ইমেজ এর shape হলো `(224, 224, 3)`, তাই batch dimension যোগ করে `(1, 224, 224, 3)` করতে হয়।
 
-- **`threshold=0.5`:** Sigmoid output 0.5 এর উপরে হলে class 1 (tomato), নিচে হলে class 0 (apple)। এই threshold adjust করা যায় — যদি false negative কমানো দরকার হয়, threshold কমাও; false positive কমানো দরকার হলে, threshold বাড়াও।
+- **`threshold=0.5`:** Sigmoid output 0.5 এর উপরে হলে class 1 (tomato), নিচে হলে class 0 (apple)। এই threshold adjust করা যায়  যদি false negative কমানো দরকার হয়, threshold কমাও; false positive কমানো দরকার হলে, threshold বাড়াও।
 
 - **Confidence calculation:** যদি prediction "apple" হয় (probability < 0.5), তাহলে confidence = 1 - probability। কারণ probability যত কম, apple হওয়ার confidence তত বেশি।
 
@@ -190,7 +190,7 @@ print(f"Prediction: {result} (Confidence: {conf:.2%})")
 import os
 
 def predict_batch(folder_path, model):
-    """একটি folder এর সব ইমেজে prediction করে।"""
+    """Predict on all images in a folder."""
     results = []
 
     for img_name in sorted(os.listdir(folder_path)):
@@ -203,7 +203,7 @@ def predict_batch(folder_path, model):
                 'confidence': confidence
             })
 
-    # Result দেখানো
+    # Show results
     print(f"\n{'Image':<30} {'Prediction':<12} {'Confidence':<12}")
     print('-' * 54)
     for r in results:
@@ -211,10 +211,10 @@ def predict_batch(folder_path, model):
 
     return results
 
-# ব্যবহার
+# Usage
 results = predict_batch('test_images/', model)
 ```
 
 ### সারসংক্ষেপ
 
-এই সেকশনে আমরা CNN মডেল training এর সম্পূর্ণ workflow শিখলাম। `model.fit()` দিয়ে training, `model.evaluate()` দিয়ে test evaluation, training curve plot করে overfitting/underfitting/good fit নির্ণয় — সব কভার করলাম। আমরা শিখলাম কিভাবে `model.save()` ও `load_model()` দিয়ে মডেল save/load করতে হয়, এবং একটি `predict_image()` function বানালাম যা নতুন ইমেজে inference করে। সবচেয়ে গুরুত্বপূর্ণ শিক্ষা: training curve হলো মডেলের health report — এটি ভালো করে analyze করতে পারলে মডেলের problem diagnose করা সহজ হয়। এই চ্যাপ্টার শেষে তুমি end-to-end custom CNN training pipeline সম্পূর্ণভাবে বুঝতে পারবে — Kaggle থেকে ডেটা ডাউনলোড থেকে শুরু করে নতুন ইমেজে prediction পর্যন্ত!
+এই সেকশনে আমরা CNN মডেল training এর সম্পূর্ণ workflow শিখলাম। `model.fit()` দিয়ে training, `model.evaluate()` দিয়ে test evaluation, training curve plot করে overfitting/underfitting/good fit নির্ণয়  সব কভার করলাম। আমরা শিখলাম কিভাবে `model.save()` ও `load_model()` দিয়ে মডেল save/load করতে হয়, এবং একটি `predict_image()` function বানালাম যা নতুন ইমেজে inference করে। সবচেয়ে গুরুত্বপূর্ণ শিক্ষা: training curve হলো মডেলের health report  এটি ভালো করে analyze করতে পারলে মডেলের problem diagnose করা সহজ হয়। এই চ্যাপ্টার শেষে তুমি end-to-end custom CNN training pipeline সম্পূর্ণভাবে বুঝতে পারবে  Kaggle থেকে ডেটা ডাউনলোড থেকে শুরু করে নতুন ইমেজে prediction পর্যন্ত!

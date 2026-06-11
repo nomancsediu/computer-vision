@@ -1,6 +1,6 @@
 ## বাইনারি ইমেজ ক্লাসিফিকেশন
 
-এই সেকশনে আমরা augmented data দিয়ে একটি সম্পূর্ণ binary image classification pipeline বানাবো — model design থেকে শুরু করে training, evaluation, এবং নতুন image তে prediction পর্যন্ত। Binary classification মানে হলো image কে দুটি class এর একটিতে classify করা — যেমন cat vs dog, fracture vs normal, spam vs not-spam। এটি computer vision এর সবচেয়ে common task গুলোর একটি।
+এই সেকশনে আমরা augmented data দিয়ে একটি সম্পূর্ণ binary image classification pipeline বানাবো  model design থেকে শুরু করে training, evaluation, এবং নতুন image তে prediction পর্যন্ত। Binary classification মানে হলো image কে দুটি class এর একটিতে classify করা  যেমন cat vs dog, fracture vs normal, spam vs not-spam। এটি computer vision এর সবচেয়ে common task গুলোর একটি।
 
 ### CNN Model Architecture ডিজাইন
 
@@ -11,15 +11,15 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 
 model = Sequential([
-    # Block 1: 32 filters — low-level features (edges, corners)
+    # Block 1: 32 filters  low-level features (edges, corners)
     Conv2D(32, (3, 3), activation='relu', input_shape=(224, 224, 3)),
     MaxPooling2D(2, 2),
 
-    # Block 2: 64 filters — mid-level features (textures, patterns)
+    # Block 2: 64 filters  mid-level features (textures, patterns)
     Conv2D(64, (3, 3), activation='relu'),
     MaxPooling2D(2, 2),
 
-    # Block 3: 128 filters — high-level features (object parts)
+    # Block 3: 128 filters  high-level features (object parts)
     Conv2D(128, (3, 3), activation='relu'),
     MaxPooling2D(2, 2),
 
@@ -28,7 +28,7 @@ model = Sequential([
 
     # Fully connected layers
     Dense(128, activation='relu'),
-    Dropout(0.5),                    # 50% neuron randomly off — overfitting কমায়
+    Dropout(0.5),                    # 50% neurons randomly off  reduces overfitting
     Dense(64, activation='relu'),
     Dropout(0.3),
 
@@ -41,13 +41,13 @@ model.summary()
 
 Architecture design এর পেছনে কিছু logic:
 
-- **Filter সংখ্যা বাড়ানো (32→64→128):** Early layers simple features detect করে (edges, corners) — তাই কম filter দরকার। Later layers complex features detect করে (object parts) — তাই বেশি filter দরকার। এটি CNN architecture এর standard practice।
+- **Filter সংখ্যা বাড়ানো (32→64→128):** Early layers simple features detect করে (edges, corners)  তাই কম filter দরকার। Later layers complex features detect করে (object parts)  তাই বেশি filter দরকার। এটি CNN architecture এর standard practice।
 
-- **Spatial dimension কমানো:** প্রতি MaxPooling2D layer spatial dimension অর্ধেক করে দেয়: 224→112→56→28। Feature map ছোট হলেও feature এর depth (filter সংখ্যা) বাড়ে — তাই information compress হয় না, বরং আরও abstract হয়।
+- **Spatial dimension কমানো:** প্রতি MaxPooling2D layer spatial dimension অর্ধেক করে দেয়: 224→112→56→28। Feature map ছোট হলেও feature এর depth (filter সংখ্যা) বাড়ে  তাই information compress হয় না, বরং আরও abstract হয়।
 
-- **Output layer: 1 neuron + sigmoid:** Binary classification এ শুধু একটি probability দরকার — class 1 হওয়ার probability। Sigmoid 0 থেকে 1 এর মধ্যে value দেয়। 0.5 এর উপরে হলে class 1, নিচে হলে class 0। এটি 2 neuron + softmax এর চেয়ে computationally efficient।
+- **Output layer: 1 neuron + sigmoid:** Binary classification এ শুধু একটি probability দরকার  class 1 হওয়ার probability। Sigmoid 0 থেকে 1 এর মধ্যে value দেয়। 0.5 এর উপরে হলে class 1, নিচে হলে class 0। এটি 2 neuron + softmax এর চেয়ে computationally efficient।
 
-- **Dropout:** Training এর সময় random neuron off করে দেয় — এতে model কোনো specific neuron এর উপর over-rely করতে পারে না, overfitting কমে। Dropout শুধু training এ apply হয়, inference এ নয়।
+- **Dropout:** Training এর সময় random neuron off করে দেয়  এতে model কোনো specific neuron এর উপর over-rely করতে পারে না, overfitting কমে। Dropout শুধু training এ apply হয়, inference এ নয়।
 
 ### Model Compile করা
 
@@ -59,16 +59,16 @@ model.compile(
 )
 ```
 
-**কেন binary_crossentropy?** Binary classification এ sigmoid output থাকে — probability value 0 থেকে 1। `binary_crossentropy` এই probability কে true label এর সাথে compare করে loss calculate করে। সূত্র: `-[y*log(p) + (1-y)*log(1-p)]`। যদি prediction correct ও confident হয়, loss কম; prediction wrong হলে, loss অনেক বেশি। এটি binary classification এর standard loss function।
+**কেন binary_crossentropy?** Binary classification এ sigmoid output থাকে  probability value 0 থেকে 1। `binary_crossentropy` এই probability কে true label এর সাথে compare করে loss calculate করে। সূত্র: `-[y*log(p) + (1-y)*log(1-p)]`। যদি prediction correct ও confident হয়, loss কম; prediction wrong হলে, loss অনেক বেশি। এটি binary classification এর standard loss function।
 
-**কেন adam?** Adam optimizer automatically learning rate adjust করে — শুরুতে বড় step নেয় (fast convergence), পরে ছোট step নেয় (fine-tuning)। বেশিরভাগ ক্ষেত্রে default `lr=0.001` ভালো কাজ করে, extra tuning লাগে না।
+**কেন adam?** Adam optimizer automatically learning rate adjust করে  শুরুতে বড় step নেয় (fast convergence), পরে ছোট step নেয় (fine-tuning)। বেশিরভাগ ক্ষেত্রে default `lr=0.001` ভালো কাজ করে, extra tuning লাগে না।
 
-### Data Preparation — ImageDataGenerator ও flow_from_directory
+### Data Preparation  ImageDataGenerator ও flow_from_directory
 
 ```python
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-# Training data generator — augmentation সহ
+# Training data generator  with augmentation
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     rotation_range=20,
@@ -81,15 +81,15 @@ train_datagen = ImageDataGenerator(
     brightness_range=[0.8, 1.2]
 )
 
-# Validation data generator — শুধু rescale
+# Validation data generator  only rescale
 val_datagen = ImageDataGenerator(rescale=1./255)
 
-# Directory থেকে image load করা
+# Load images from directory
 train_generator = train_datagen.flow_from_directory(
     'dataset/train',              # Training folder path
     target_size=(224, 224),       # Resize to 224x224
     batch_size=32,                # 32 image per batch
-    class_mode='binary'           # Binary classification (0 বা 1)
+    class_mode='binary'           # Binary classification (0 or 1)
 )
 
 val_generator = val_datagen.flow_from_directory(
@@ -99,12 +99,12 @@ val_generator = val_datagen.flow_from_directory(
     class_mode='binary'
 )
 
-# Class label mapping দেখা
+# View class label mapping
 print(f"Class indices: {train_generator.class_indices}")
-# উদাহরণ output: {'cats': 0, 'dogs': 1}
+# Example output: {'cats': 0, 'dogs': 1}
 ```
 
-**class_mode='binary':** এটি image গুলোকে 0 বা 1 label দেয়। Folder name alphabetical order এ label assign হয় — যেমন `cats` folder → 0, `dogs` folder → 1। তাই `class_indices` check করে নিশ্চিত হও কোন class কোন label পেয়েছে।
+**class_mode='binary':** এটি image গুলোকে 0 বা 1 label দেয়। Folder name alphabetical order এ label assign হয়  যেমন `cats` folder → 0, `dogs` folder → 1। তাই `class_indices` check করে নিশ্চিত হও কোন class কোন label পেয়েছে।
 
 **Directory structure:** `flow_from_directory()` নিচের মতো folder structure expect করে:
 
@@ -124,7 +124,7 @@ dataset/
     └── class_b/
 ```
 
-### Training — model.fit() দিয়ে ট্রেইনিং
+### Training  model.fit() দিয়ে ট্রেইনিং
 
 ```python
 # Training
@@ -176,7 +176,7 @@ plt.show()
 - Training accuracy অনেক বেশি, validation accuracy অনেক কম → **Overfitting** ❌
 - দুটোই কম → **Underfitting** ❌
 
-Augmentation use করার কারণে overfitting অনেক কম হবে — কারণ model প্রতি epoch এ নতুন augmented image দেখে, একই image বারবার দেখে না।
+Augmentation use করার কারণে overfitting অনেক কম হবে  কারণ model প্রতি epoch এ নতুন augmented image দেখে, একই image বারবার দেখে না।
 
 ### নতুন ইমেজে Prediction
 
@@ -191,7 +191,7 @@ def predict_binary(img_path, model, target_size=(224, 224), threshold=0.5):
     Binary classification prediction function।
 
     Parameters:
-        img_path: ইমেজের file path
+        img_path: file path of the image
         model: trained Keras model
         target_size: resize dimension
         threshold: classification threshold (default 0.5)
@@ -200,7 +200,7 @@ def predict_binary(img_path, model, target_size=(224, 224), threshold=0.5):
         predicted_class: class name
         confidence: prediction confidence
     """
-    # Image load ও preprocess
+    # Load and preprocess image
     img = image.load_img(img_path, target_size=target_size)
     img_array = image.img_to_array(img)
     img_array = img_array / 255.0                        # Normalize
@@ -209,7 +209,7 @@ def predict_binary(img_path, model, target_size=(224, 224), threshold=0.5):
     # Prediction
     probability = model.predict(img_array, verbose=0)[0][0]   # Sigmoid output
 
-    # Class mapping (train_generator.class_indices থেকে পাওয়া)
+    # Class mapping (obtained from train_generator.class_indices)
     class_names = {0: 'cats', 1: 'dogs'}
 
     if probability > threshold:
@@ -229,33 +229,33 @@ result, conf = predict_binary('test_dog.jpg', model)
 print(f"Prediction: {result} (Confidence: {conf:.2%})")
 ```
 
-**Threshold adjustment:** Default threshold 0.5, কিন্তু task এর উপর ভিত্তি করে এটি change করা যায়। Medical diagnosis এ false negative খুব dangerous — তাই threshold কমানো যায় (যেমন 0.3) যাতে কম confidence তেও positive class predict হয়। আবার spam detection এ false positive বেশি problematic — তাই threshold বাড়ানো যায় (যেমন 0.7)।
+**Threshold adjustment:** Default threshold 0.5, কিন্তু task এর উপর ভিত্তি করে এটি change করা যায়। Medical diagnosis এ false negative খুব dangerous  তাই threshold কমানো যায় (যেমন 0.3) যাতে কম confidence তেও positive class predict হয়। আবার spam detection এ false positive বেশি problematic  তাই threshold বাড়ানো যায় (যেমন 0.7)।
 
 ### মডেল Save করা
 
 ```python
 from tensorflow.keras.models import save_model, load_model
 
-# মডেল save
+# Save model
 model.save('binary_classifier.h5')
-print("মডেল save হয়েছে: binary_classifier.h5")
+print("Model saved: binary_classifier.h5")
 
-# মডেল load
+# Load model
 loaded_model = load_model('binary_classifier.h5')
-print("মডেল load হয়েছে!")
+print("Model loaded!")
 
-# Load করা model verify
+# Verify loaded model
 result, conf = predict_binary('test_cat.jpg', loaded_model)
 print(f"Loaded model prediction: {result} (Confidence: {conf:.2%})")
 ```
 
 ### Complete End-to-End Code
 
-সব একসাথে — complete pipeline একটি script এ:
+সব একসাথে  complete pipeline একটি script এ:
 
 ```python
 # ========================================================
-# Binary Image Classification — Complete Pipeline
+# Binary Image Classification  Complete Pipeline
 # ========================================================
 
 import numpy as np
@@ -355,7 +355,7 @@ def predict_image(img_path, model, target_size=(224, 224)):
     img_array = np.expand_dims(img_array, axis=0)
     probability = model.predict(img_array, verbose=0)[0][0]
 
-    class_names = {0: 'class_a', 1: 'class_b'}  # নিজের class name বসাও
+    class_names = {0: 'class_a', 1: 'class_b'}  # Put your own class names
     if probability > 0.5:
         return class_names[1], float(probability)
     else:
@@ -368,4 +368,4 @@ def predict_image(img_path, model, target_size=(224, 224)):
 
 ### সারসংক্ষেপ
 
-এই সেকশনে আমরা একটি সম্পূর্ণ binary image classification pipeline বানালাম। CNN model design (Conv2D → MaxPool → Dense → sigmoid output), compile (adam + binary_crossentropy), augmented data দিয়ে training, training curve evaluation, নতুন image তে prediction — সব কভার করলাম। এই pipeline টি যেকোনো binary classification problem এ reuse করা যাবে — শুধু dataset change করো আর class names update করো। পরের চ্যাপ্টারে আমরা শিখবো কিভাবে প্রিট্রেইন্ড model ব্যবহার করে আরও ভালো accuracy পাওয়া যায় — transfer learning!
+এই সেকশনে আমরা একটি সম্পূর্ণ binary image classification pipeline বানালাম। CNN model design (Conv2D → MaxPool → Dense → sigmoid output), compile (adam + binary_crossentropy), augmented data দিয়ে training, training curve evaluation, নতুন image তে prediction  সব কভার করলাম। এই pipeline টি যেকোনো binary classification problem এ reuse করা যাবে  শুধু dataset change করো আর class names update করো। পরের চ্যাপ্টারে আমরা শিখবো কিভাবে প্রিট্রেইন্ড model ব্যবহার করে আরও ভালো accuracy পাওয়া যায়  transfer learning!

@@ -1,5 +1,8 @@
 # Summary
 
+- [এনভায়রনমেন্ট সেটআপ](appendix-01-setup.md)
+- [গ্লসারি](appendix-03-glossary.md)
+
 - [কম্পিউটার ভিশন পরিচিতি](ch01-00-introduction.md)
   - [কম্পিউটার ভিশন কি?](ch01-01-what-is-cv.md)
   - [কম্পিউটার ভিশন এর ইতিহাস ও গুরুত্ব](ch01-02-history-importance.md)
@@ -47,15 +50,3 @@
   - [ResNet50 দিয়ে প্রেডিকশন](ch10-01-resnet50.md)
   - [VGG16 দিয়ে বোন ফ্র্যাকচার ক্লাসিফিকেশন](ch10-02-vgg16-fracture.md)
 
-- [Flask ওয়েব অ্যাপ্লিকেশন](ch11-00-flask-app.md)
-  - [Flask অ্যাপ বিল্ডিং](ch11-01-flask-building.md)
-  - [HTML টেমপ্লেট ও স্টাইলিং](ch11-02-html-template.md)
-
-- [Docker কন্টেইনারাইজেশন ও ডিপ্লয়মেন্ট](ch12-00-docker-deployment.md)
-  - [Dockerfile ও কন্টেইনার বিল্ড](ch12-01-dockerfile.md)
-  - [প্রোডাকশন ডিপ্লয়মেন্ট](ch12-02-production-deployment.md)
-
-- [এপেন্ডিক্স](appendix-00-appendix.md)
-  - [এনভায়রনমেন্ট সেটআপ](appendix-01-setup.md)
-  - [কমপ্লিট কোড লিস্টিং](appendix-02-code-listings.md)
-  - [গ্লসারি](appendix-03-glossary.md)

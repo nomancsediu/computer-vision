@@ -1,6 +1,6 @@
 ## ইমেজ ফিল্টার পরিচিতি
 
-ইমেজ ফিল্টার হলো কম্পিউটার ভিশন এর অন্যতম গুরুত্বপূর্ণ ধারণা। ফিল্টার ব্যবহার করে আমরা ইমেজের বিভিন্ন বৈশিষ্ট্য বের করতে পারি — যেমন এজ, কর্নার, টেক্সচার ইত্যাদি। ফিল্টারকে আরেক নামেও ডাকা হয় — kernel। একটি kernel হলো ছোট একটি সংখ্যার ম্যাট্রিক্স, যা ইমেজের উপর দিয়ে slide করে এবং প্রতিটি পজিশনে element-wise multiplication ও sum করে একটি নতুন মান তৈরি করে। এই পুরো প্রক্রিয়াটিকেই বলে convolution। এই সেকশনে আমরা ফিল্টার কী, কিভাবে কাজ করে, এবং কোন কোন ধরনের ফিল্টার আছে — সেসব বিস্তারিত শিখবো।
+ইমেজ ফিল্টার হলো কম্পিউটার ভিশন এর অন্যতম গুরুত্বপূর্ণ ধারণা। ফিল্টার ব্যবহার করে আমরা ইমেজের বিভিন্ন বৈশিষ্ট্য বের করতে পারি  যেমন এজ, কর্নার, টেক্সচার ইত্যাদি। ফিল্টারকে আরেক নামেও ডাকা হয়  kernel। একটি kernel হলো ছোট একটি সংখ্যার ম্যাট্রিক্স, যা ইমেজের উপর দিয়ে slide করে এবং প্রতিটি পজিশনে element-wise multiplication ও sum করে একটি নতুন মান তৈরি করে। এই পুরো প্রক্রিয়াটিকেই বলে convolution। এই সেকশনে আমরা ফিল্টার কী, কিভাবে কাজ করে, এবং কোন কোন ধরনের ফিল্টার আছে  সেসব বিস্তারিত শিখবো।
 
 ### ফিল্টার বা কারনেল কী?
 
@@ -8,14 +8,14 @@
 
 ফিল্টার দিয়ে ইমেজকে বিভিন্নভাবে transform করা যায়। সবচেয়ে সাধারণ transformation গুলো হলো:
 
-- **Sharpen** — ইমেজের এজ ও ডিটেইল বেশি স্পষ্ট করে তোলে। মাঝের পিক্সেলের মান বড় আর পার্শ্ববর্তী পিক্সেলের মান ছোট রাখা হয়, যাতে লোকাল কন্ট্রাস্ট বাড়ে।
-- **Blur** — ইমেজের ছোট ছোট noise দূর করে ইমেজকে smooth করে। সব মান সমান রাখা হয় (box blur), অথবা মাঝের দিকে বড় আর কোনায় ছোট মান দেওয়া হয় (Gaussian blur)।
-- **Edge Detect** — ইমেজে যেখানে intensity হঠাৎ করে বদলায়, সেই boundary গুলো বের করে। Sobel, Laplacian এগুলো edge detection ফিল্টার।
-- **Emboss** — ইমেজকে এমনভাবে transform করে যেন মনে হয় ইমেজটি কাগজে উঠিয়ে লেখা (embossed)। এটি এজের একপাশে highlight আর অন্যপাশে shadow তৈরি করে।
+- **Sharpen**  ইমেজের এজ ও ডিটেইল বেশি স্পষ্ট করে তোলে। মাঝের পিক্সেলের মান বড় আর পার্শ্ববর্তী পিক্সেলের মান ছোট রাখা হয়, যাতে লোকাল কন্ট্রাস্ট বাড়ে।
+- **Blur**  ইমেজের ছোট ছোট noise দূর করে ইমেজকে smooth করে। সব মান সমান রাখা হয় (box blur), অথবা মাঝের দিকে বড় আর কোনায় ছোট মান দেওয়া হয় (Gaussian blur)।
+- **Edge Detect**  ইমেজে যেখানে intensity হঠাৎ করে বদলায়, সেই boundary গুলো বের করে। Sobel, Laplacian এগুলো edge detection ফিল্টার।
+- **Emboss**  ইমেজকে এমনভাবে transform করে যেন মনে হয় ইমেজটি কাগজে উঠিয়ে লেখা (embossed)। এটি এজের একপাশে highlight আর অন্যপাশে shadow তৈরি করে।
 
-### ইমেজ রিডিং — matplotlib vs OpenCV
+### ইমেজ রিডিং  matplotlib vs OpenCV
 
-ইমেজ রিড করার জন্য আমরা দুটি জনপ্রিয় লাইব্রেরি ব্যবহার করতে পারি — OpenCV এবং matplotlib। তবে এই দুটি লাইব্রেরির মধ্যে একটি গুরুত্বপূর্ণ পার্থক্য আছে যেটা মনে রাখা জরুরি। OpenCV ইমেজ রিড করে BGR (Blue-Green-Red) ফরম্যাটে, আর matplotlib এর `mpimg` মডিউল রিড করে RGB (Red-Green-Blue) ফরম্যাটে। যদি তুমি OpenCV দিয়ে রিড করে matplotlib দিয়ে ডিসপ্লে করো, তাহলে রং ভুল দেখাবে — লাল জায়গায় নীল, নীল জায়গায় লাল দেখাবে। তাই যখন দুটি লাইব্রেরি একসাথে ব্যবহার করবে, তখন অবশ্যই BGR থেকে RGB তে convert করতে হবে।
+ইমেজ রিড করার জন্য আমরা দুটি জনপ্রিয় লাইব্রেরি ব্যবহার করতে পারি  OpenCV এবং matplotlib। তবে এই দুটি লাইব্রেরির মধ্যে একটি গুরুত্বপূর্ণ পার্থক্য আছে যেটা মনে রাখা জরুরি। OpenCV ইমেজ রিড করে BGR (Blue-Green-Red) ফরম্যাটে, আর matplotlib এর `mpimg` মডিউল রিড করে RGB (Red-Green-Blue) ফরম্যাটে। যদি তুমি OpenCV দিয়ে রিড করে matplotlib দিয়ে ডিসপ্লে করো, তাহলে রং ভুল দেখাবে  লাল জায়গায় নীল, নীল জায়গায় লাল দেখাবে। তাই যখন দুটি লাইব্রেরি একসাথে ব্যবহার করবে, তখন অবশ্যই BGR থেকে RGB তে convert করতে হবে।
 
 ```python
 import cv2
@@ -23,15 +23,15 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 
-# matplotlib দিয়ে রিড — RGB ফরম্যাটে আসে
+# Read with matplotlib - comes in RGB format
 img_mpl = mpimg.imread("resources/lena.png")
 print(f"matplotlib shape: {img_mpl.shape}")
 
-# OpenCV দিয়ে রিড — BGR ফরম্যাটে আসে
+# Read with OpenCV - comes in BGR format
 img_cv2 = cv2.imread("resources/lena.png")
 print(f"OpenCV shape: {img_cv2.shape}")
 
-# BGR থেকে RGB তে convert করা
+# Convert from BGR to RGB
 img_cv2_rgb = cv2.cvtColor(img_cv2, cv2.COLOR_BGR2RGB)
 
 fig, axes = plt.subplots(1, 3, figsize=(15, 5))
@@ -40,10 +40,10 @@ axes[0].imshow(img_mpl)
 axes[0].set_title("matplotlib (RGB)")
 
 axes[1].imshow(img_cv2)
-axes[1].set_title("OpenCV BGR (ভুল রং!)")
+axes[1].set_title("OpenCV BGR (Wrong color!)")
 
 axes[2].imshow(img_cv2_rgb)
-axes[2].set_title("OpenCV → RGB (সঠিক)")
+axes[2].set_title("OpenCV → RGB (Correct)")
 
 for ax in axes:
     ax.axis("off")
@@ -52,11 +52,11 @@ plt.tight_layout()
 plt.show()
 ```
 
-এই কোডটি রান করলে তুমি দেখবে মাঝের ইমেজটিতে রং ভুল দেখাচ্ছে — লাল আর নীল জায়গা বদলে গেছে। তৃতীয় ইমেজটিতে `cv2.cvtColor()` ব্যবহার করে BGR কে RGB তে convert করা হয়েছে, তাই সেটি সঠিক দেখাচ্ছে। এই বিষয়টি মনে রাখা অত্যন্ত জরুরি — যখনই OpenCV আর matplotlib একসাথে ব্যবহার করবে, অবশ্যই conversion করবে।
+এই কোডটি রান করলে তুমি দেখবে মাঝের ইমেজটিতে রং ভুল দেখাচ্ছে  লাল আর নীল জায়গা বদলে গেছে। তৃতীয় ইমেজটিতে `cv2.cvtColor()` ব্যবহার করে BGR কে RGB তে convert করা হয়েছে, তাই সেটি সঠিক দেখাচ্ছে। এই বিষয়টি মনে রাখা অত্যন্ত জরুরি  যখনই OpenCV আর matplotlib একসাথে ব্যবহার করবে, অবশ্যই conversion করবে।
 
 ### RGB চ্যানেল ভিজুয়ালাইজেশন
 
-RGB ইমেজ আসলে তিনটি আলাদা চ্যানেলের সমষ্টি — Red, Green, এবং Blue। `cv2.split()` ফাংশন ব্যবহার করে আমরা এই তিনটি চ্যানেলকে আলাদা করতে পারি। প্রতিটি চ্যানেল আসলে একটি 2D grayscale ইমেজ, যেখানে প্রতিটি পিক্সেলের মান 0 থেকে 255 এর মধ্যে থাকে। 0 মানে সেই রং একদম নেই, 255 মানে সেই রং সবচেয়ে বেশি। তিনটি চ্যানেল একসাথে mix হয়ে আমরা যে রঙিন ইমেজ দেখি সেটি তৈরি হয়।
+RGB ইমেজ আসলে তিনটি আলাদা চ্যানেলের সমষ্টি  Red, Green, এবং Blue। `cv2.split()` ফাংশন ব্যবহার করে আমরা এই তিনটি চ্যানেলকে আলাদা করতে পারি। প্রতিটি চ্যানেল আসলে একটি 2D grayscale ইমেজ, যেখানে প্রতিটি পিক্সেলের মান 0 থেকে 255 এর মধ্যে থাকে। 0 মানে সেই রং একদম নেই, 255 মানে সেই রং সবচেয়ে বেশি। তিনটি চ্যানেল একসাথে mix হয়ে আমরা যে রঙিন ইমেজ দেখি সেটি তৈরি হয়।
 
 ```python
 import cv2
@@ -66,7 +66,7 @@ import numpy as np
 img = cv2.imread("resources/lena.png")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-# তিনটি চ্যানেল আলাদা করা
+# Split the three channels
 R, G, B = cv2.split(img_rgb)
 
 print(f"Red channel shape: {R.shape}")
@@ -98,7 +98,7 @@ plt.show()
 
 ### Grayscale কনভার্শন
 
-অনেক সময় আমাদের রঙিন ইমেজের বদলে grayscale (সাদা-কালো) ইমেজ নিয়ে কাজ করতে হয়। Grayscale ইমেজে শুধু একটি চ্যানেল থাকে, তাই computation অনেক কম হয় এবং অনেক অপারেশন সহজ হয়ে যায়। RGB থেকে grayscale এ convert করার একটি নির্দিষ্ট ফর্মুলা আছে — এটি সরল গড় (average) নয়, বরং মানুষের চোখ কিভাবে বিভিন্ন রং দেখে তার উপর ভিত্তি করে তৈরি:
+অনেক সময় আমাদের রঙিন ইমেজের বদলে grayscale (সাদা-কালো) ইমেজ নিয়ে কাজ করতে হয়। Grayscale ইমেজে শুধু একটি চ্যানেল থাকে, তাই computation অনেক কম হয় এবং অনেক অপারেশন সহজ হয়ে যায়। RGB থেকে grayscale এ convert করার একটি নির্দিষ্ট ফর্মুলা আছে  এটি সরল গড় (average) নয়, বরং মানুষের চোখ কিভাবে বিভিন্ন রং দেখে তার উপর ভিত্তি করে তৈরি:
 
 **Gray = 0.299 × R + 0.587 × G + 0.114 × B**
 
@@ -112,16 +112,16 @@ import numpy as np
 img = cv2.imread("resources/lena.png")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-# OpenCV দিয়ে grayscale convert
+# Convert to grayscale with OpenCV
 img_gray_cv2 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-# ম্যানুয়ালি grayscale convert (ফর্মুলা ব্যবহার করে)
+# Manually convert to grayscale (using formula)
 R, G, B = cv2.split(img_rgb)
 img_gray_manual = np.uint8(0.299 * R + 0.587 * G + 0.114 * B)
 
 print(f"OpenCV grayscale shape: {img_gray_cv2.shape}")
 print(f"Manual grayscale shape: {img_gray_manual.shape}")
-print(f"দুটোর মধ্যে পার্থক্য (max): {np.max(np.abs(img_gray_cv2.astype(float) - img_gray_manual.astype(float)))}")
+print(f"Difference between the two (max): {np.max(np.abs(img_gray_cv2.astype(float) - img_gray_manual.astype(float)))}")
 
 fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -141,11 +141,11 @@ plt.tight_layout()
 plt.show()
 ```
 
-দুটি grayscale ইমেজ প্রায় একই দেখাবে, কারণ OpenCV ও একই ফর্মুলা ব্যবহার করে (শুধু rounding এ সামান্য পার্থক্য হতে পারে)। এই ফর্মুলাটি মনে রাখা জরুরি — গাণিতিকভাবে কনভোলিউশন বোঝার জন্য grayscale ইমেজ নিয়ে কাজ করা অনেক সহজ।
+দুটি grayscale ইমেজ প্রায় একই দেখাবে, কারণ OpenCV ও একই ফর্মুলা ব্যবহার করে (শুধু rounding এ সামান্য পার্থক্য হতে পারে)। এই ফর্মুলাটি মনে রাখা জরুরি  গাণিতিকভাবে কনভোলিউশন বোঝার জন্য grayscale ইমেজ নিয়ে কাজ করা অনেক সহজ।
 
 ### সাধারণ ফিল্টার টাইপ ও তাদের Kernel
 
-এখন আসি সবচেয়ে মজার পার্টে — কোন ফিল্টার কোন কাজ করে এবং তাদের kernel দেখতে কেমন। নিচের টেবিলে সবচেয়ে সাধারণ ফিল্টার গুলো দেওয়া হলো:
+এখন আসি সবচেয়ে মজার পার্টে  কোন ফিল্টার কোন কাজ করে এবং তাদের kernel দেখতে কেমন। নিচের টেবিলে সবচেয়ে সাধারণ ফিল্টার গুলো দেওয়া হলো:
 
 | ফিল্টার নাম | 3×3 Kernel | কাজ |
 |---|---|---|
@@ -156,7 +156,7 @@ plt.show()
 | Laplacian | [[0,1,0],[1,-4,1],[0,1,0]] | এজ ডিটেকশন (সব দিকে) |
 | Emboss | [[-2,-1,0],[-1,1,1],[0,1,2]] | 3D embossed ইফেক্ট তৈরি |
 
-Identity kernel হলো সবচেয়ে সহজ ফিল্টার — মাঝে 1 আর বাকি সব 0। এটি ইমেজে কোনো পরিবর্তন করে না, convolution এর সবচেয়ে বেসিক উদাহরণ। Box Blur kernel এ সব মান সমান (1/9), তাই এটি একটি সাধারণ average নেয় — প্রতিটি পিক্সেলকে তার পাশের 8টি পিক্সেলের সাথে average করে দেয়। Gaussian Blur একটু ভিন্ন — মাঝের পিক্সেলে সবচেয়ে বেশি weight (4/16) আর কোনায় সবচেয়ে কম weight (1/16), যার ফলে blur বেশি natural দেখায়। Sharpen kernel এ মাঝে 5 আর চারপাশে -1, যা মাঝের পিক্সেলকে বাড়িয়ে দেয় আর পাশের পিক্সেলকে কমিয়ে দেয় — ফলে লোকাল কন্ট্রাস্ট বেড়ে গিয়ে এজ শার্প হয়। Laplacian kernel সব দিকের এজ একসাথে বের করে — মাঝে -4 আর চারদিকে 1, যা দ্বিতীয় ডেরিভেটিভ (second derivative) হিসেবে কাজ করে। Emboss kernel একপাশে negative আর অন্যপাশে positive মান রাখে, যা এজের একদিকে highlight আর অন্যদিকে shadow তৈরি করে।
+Identity kernel হলো সবচেয়ে সহজ ফিল্টার  মাঝে 1 আর বাকি সব 0। এটি ইমেজে কোনো পরিবর্তন করে না, convolution এর সবচেয়ে বেসিক উদাহরণ। Box Blur kernel এ সব মান সমান (1/9), তাই এটি একটি সাধারণ average নেয়  প্রতিটি পিক্সেলকে তার পাশের 8টি পিক্সেলের সাথে average করে দেয়। Gaussian Blur একটু ভিন্ন  মাঝের পিক্সেলে সবচেয়ে বেশি weight (4/16) আর কোনায় সবচেয়ে কম weight (1/16), যার ফলে blur বেশি natural দেখায়। Sharpen kernel এ মাঝে 5 আর চারপাশে -1, যা মাঝের পিক্সেলকে বাড়িয়ে দেয় আর পাশের পিক্সেলকে কমিয়ে দেয়  ফলে লোকাল কন্ট্রাস্ট বেড়ে গিয়ে এজ শার্প হয়। Laplacian kernel সব দিকের এজ একসাথে বের করে  মাঝে -4 আর চারদিকে 1, যা দ্বিতীয় ডেরিভেটিভ (second derivative) হিসেবে কাজ করে। Emboss kernel একপাশে negative আর অন্যপাশে positive মান রাখে, যা এজের একদিকে highlight আর অন্যদিকে shadow তৈরি করে।
 
 ```python
 import cv2
@@ -167,7 +167,7 @@ img = cv2.imread("resources/lena.png")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-# বিভিন্ন ফিল্টারের kernel ডিফাইন করা
+# Define kernels for different filters
 kernels = {
     "Identity": np.array([[0, 0, 0],
                           [0, 1, 0],
@@ -194,12 +194,12 @@ kernels = {
 
 fig, axes = plt.subplots(2, 4, figsize=(20, 10))
 
-# Original ইমেজ
+# Original image
 axes[0, 0].imshow(img_gray, cmap="gray")
 axes[0, 0].set_title("Original Grayscale")
 axes[0, 0].axis("off")
 
-# প্রতিটি ফিল্টার apply করে দেখানো
+# Apply and show each filter
 idx = 1
 for name, kernel in kernels.items():
     row = idx // 4
@@ -210,17 +210,17 @@ for name, kernel in kernels.items():
     axes[row, col].axis("off")
     idx += 1
 
-# খালি subplot hide করা
+# Hide empty subplot
 axes[1, 3].axis("off")
 
 plt.tight_layout()
 plt.show()
 ```
 
-এই কোডটি রান করলে তুমি দেখতে পাবে Identity ফিল্টার ইমেজে কোনো পরিবর্তন করে না, Box Blur আর Gaussian Blur ইমেজকে smooth করে, Sharpen এজগুলো স্পষ্ট করে, Laplacian শুধু এজ বের করে, আর Emboss একটি 3D ইফেক্ট তৈরি করে। `cv2.filter2D()` ফাংশনটি OpenCV এর built-in convolution ফাংশন — পরে আমরা নিজের convolution ফাংশন লিখবো।
+এই কোডটি রান করলে তুমি দেখতে পাবে Identity ফিল্টার ইমেজে কোনো পরিবর্তন করে না, Box Blur আর Gaussian Blur ইমেজকে smooth করে, Sharpen এজগুলো স্পষ্ট করে, Laplacian শুধু এজ বের করে, আর Emboss একটি 3D ইফেক্ট তৈরি করে। `cv2.filter2D()` ফাংশনটি OpenCV এর built-in convolution ফাংশন  পরে আমরা নিজের convolution ফাংশন লিখবো।
 
 ### Hand-crafted ফিল্টার থেকে CNN Learned ফিল্টার
 
-এখন পর্যন্ত আমরা যেসব ফিল্টার দেখলাম সেগুলো মানুষ ডিজাইন করেছে — এদের বলে hand-crafted filters বা traditional filters। এই ফিল্টারগুলোর kernel মান নির্দিষ্ট, আমরা আগে থেকেই জানি কোন kernel দিয়ে কী কাজ হবে। কিন্তু Convolutional Neural Network (CNN) এ ফিল্টারের kernel মান আমরা ডিজাইন করি না — নেটওয়ার্ক training এর সময় data থেকে নিজেই learn করে। এটিই CNN এর সবচেয়ে বড় শক্তি।
+এখন পর্যন্ত আমরা যেসব ফিল্টার দেখলাম সেগুলো মানুষ ডিজাইন করেছে  এদের বলে hand-crafted filters বা traditional filters। এই ফিল্টারগুলোর kernel মান নির্দিষ্ট, আমরা আগে থেকেই জানি কোন kernel দিয়ে কী কাজ হবে। কিন্তু Convolutional Neural Network (CNN) এ ফিল্টারের kernel মান আমরা ডিজাইন করি না  নেটওয়ার্ক training এর সময় data থেকে নিজেই learn করে। এটিই CNN এর সবচেয়ে বড় শক্তি।
 
-CNN এর প্রথম লেয়ারের ফিল্টারগুলো অনেক সময় Sobel বা Gabor ফিল্টারের মতো দেখতে হয় — কারণ এজ ডিটেকশন অনেক ভিশন টাস্কের জন্য একটি মৌলিক feature। কিন্তু ডিপ লেয়ারের ফিল্টারগুলো আরও complex pattern detect করে — texture, shape, এমনকি object এর অংশও। Traditional ফিল্টার দিয়ে এই complex pattern detect করা সম্ভব না, কিন্তু CNN data থেকে স্বয়ংক্রিয়ভাবে সেরা ফিল্টার learn করে নেয়। তাই CNN শুধু edge নয়, যেকোনো visual feature automatically learn করতে পারে — এটিই deep learning এর মূল শক্তি। পরের চ্যাপ্টারগুলোতে আমরা দেখবো কিভাবে CNN এই ফিল্টারগুলো learn করে এবং কিভাবে 3D ইমেজে convolution কাজ করে।
+CNN এর প্রথম লেয়ারের ফিল্টারগুলো অনেক সময় Sobel বা Gabor ফিল্টারের মতো দেখতে হয়  কারণ এজ ডিটেকশন অনেক ভিশন টাস্কের জন্য একটি মৌলিক feature। কিন্তু ডিপ লেয়ারের ফিল্টারগুলো আরও complex pattern detect করে  texture, shape, এমনকি object এর অংশও। Traditional ফিল্টার দিয়ে এই complex pattern detect করা সম্ভব না, কিন্তু CNN data থেকে স্বয়ংক্রিয়ভাবে সেরা ফিল্টার learn করে নেয়। তাই CNN শুধু edge নয়, যেকোনো visual feature automatically learn করতে পারে  এটিই deep learning এর মূল শক্তি। পরের চ্যাপ্টারগুলোতে আমরা দেখবো কিভাবে CNN এই ফিল্টারগুলো learn করে এবং কিভাবে 3D ইমেজে convolution কাজ করে।
